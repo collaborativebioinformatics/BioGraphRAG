@@ -83,7 +83,7 @@ make qa
 - `make embed` — build embeddings, create the OpenSearch index, and upsert vectors.
 - `make qa` — answer questions from `configs/demo_questions.yaml`.
 - `make api` / `make ui` — launch FastAPI and Streamlit front-ends for interactive use.
-- `make teardown` — optional helper to clean Neptune/OpenSearch artifacts via `src/utils/aws.py`.
+
 
 ## Running Retrieval & QA
 1. Ensure Neptune is reachable (`configs/default.yaml` → `neptune.endpoint`).
@@ -102,8 +102,8 @@ Build with:
 
 
 ```bash
-docker build -t biographrag-api -f infra/docker/Dockerfile.api .
-docker build -t biographrag-ui -f infra/docker/Dockerfile.ui .
+docker build -t biographrag-api -f infra/docker/Dockerfile.api.
+docker build -t biographrag-ui -f infra/docker/Dockerfile.ui.
 ```
 
 ## Production deployment (AWS)
