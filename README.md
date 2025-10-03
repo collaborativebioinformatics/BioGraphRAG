@@ -16,7 +16,7 @@ We tackle biomedical question answering by pairing graph-native retrieval with n
 - **Pruning**: Apply a PCST-like algorithm to create a compact, evidence-rich subgraph.
 - **Answering**: Feed the subgraph + snippets into an LLM to generate a grounded answer with biomedical information and PMIDs/experiment IDs.
 
-<img width="5102" height="2808" alt="image" src="https://github.com/user-attachments/assets/4378ca2c-be97-4e39-b2b1-a93cdfbe962a" />
+<img width="5102" height="2808" alt="image" src="https://github.com/user-attachments/assets/54910e29-83c5-4bba-8315-81eebe36cbe6" />
 
 
 ## Methods
