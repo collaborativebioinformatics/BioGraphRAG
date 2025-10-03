@@ -1,3 +1,6 @@
+<img width="474" height="376" alt="Screenshot 2025-10-03 at 12 44 02 AM" src="https://github.com/user-attachments/assets/ddc9f200-05bd-41a2-87bf-04030ddda915" />
+
+
 ## Overview
 Natural language queries using GenAI systems are known to generate hallucinations of facts and may not be able to provide evidence for explanations. For use in biomedical research, GenAI must provide valid and well-grounded results. Therefore, a biomedical system that generates results based on factual biomedical knowledge and publications are needed. 
 
