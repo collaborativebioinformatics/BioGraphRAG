@@ -131,9 +131,6 @@ The system is designed to run fully on AWS with Amazon Neptune (openCypher), Ama
   ```
   Response includes the grounded answer, prompt, nodes, edges, and evidence hits.
 
-### Secure secrets management
-
-
 
 ### What the user must supply (summary)
 - Neptune writer endpoint (port 8182) and bulk‑loader role ARN
@@ -167,7 +164,7 @@ These are not bundled with the repository and must be provided at deploy time.
 MIT License. See `LICENSE` for the full text.
 
 ## Citation
-If you use BioGraphRAG in published work, please cite the NVIDIA GraphRAG blog and G-Retriever paper listed above. A project-specific BibTeX entry will be added once the hackathon whitepaper is finalized.
+If you use BioGraphRAG in published work, please cite the NVIDIA GraphRAG blog and G-Retriever paper listed above. 
 
 ## Acknowledgements
 - BioGraphRAG builds upon GraphRAG patterns, PyTorch Geometric utilities, and the collective work of the hackathon team.
