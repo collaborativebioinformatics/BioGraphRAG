@@ -93,6 +93,7 @@ neptune_loader:
   file_name_prefix: neptune_loader
 
 vector_store:
+  backend: opensearch
   include_types:
     - PRIME_* 
     - PKG_*
