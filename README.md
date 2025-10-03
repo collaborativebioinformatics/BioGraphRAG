@@ -35,3 +35,133 @@ We run with fixed random seeds, log every relevant hyperparameter, and evaluate 
 ### References
 - NVIDIA Technical Blog: Boosting Q&A Accuracy with GraphRAG Using PyG and Graph Databases — see <https://developer.nvidia.com/blog/boosting-qa-accuracy-with-graphrag-using-pyg-and-graph-databases/>
 - G-Retriever: Retrieval-Augmented Generation for Textual Graph Understanding and Question Answering (arXiv:2402.07630) — see <https://arxiv.org/pdf/2402.07630>
+
+## News & Milestones
+- **Oct 2025** — PrimeKG-only ingest + Neptune-first retrieval stack merged for hackathon readiness.
+- **Sep 2025** — Unified dual-KG configs (`configs/default.yaml`) released with new demo questions.
+- **Aug 2025** — Added Docker builds for API/UI services and automated vector-store bootstrap.
+
+## Repository Layout
+- `configs/` — YAML configs for ingestion, retrieval, and demo questions.
+- `docs/` — Architecture notes (`methods.md`) and dual-KG design primer (`dual_kg.md`).
+- `infra/docker/` — Container images for API and Streamlit UI deployments.
+- `src/` — Application code; see `src/rag/pipeline.py` for the end-to-end flow.
+- `tests/` — Neptune expansion regression tests.
+- `OPTIONAL_ADDITIONS.txt` — Hardening and observability backlog.
+
+## Quickstart
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+
+# Generate embeddings and seed vector store
+make embed
+
+# Run an end-to-end demo
+make qa
+```
+
+## Data Preparation
+1. Download PrimeKG extracts into `data/local/primekg/exports/` using the filenames referenced in `configs/ingest_prime.yaml`.
+2. Place PubMedKG exports under `data/local/pubmedkg/exports/` or point the config to an S3 prefix.
+3. Convert raw files into Neptune-friendly CSVs:
+   ```bash
+   make prime_to_neptune
+   make pkg_to_neptune
+   ```
+4. Upload the generated CSVs to S3 and trigger Neptune bulk loads via `make load_prime` / `make load_pkg`.
+
+## Make Targets
+- `make setup` — create virtualenv and install dependencies.
+- `make embed` — build embeddings, create the OpenSearch index, and upsert vectors.
+- `make qa` — answer questions from `configs/demo_questions.yaml`.
+- `make api` / `make ui` — launch FastAPI and Streamlit front-ends for interactive use.
+- `make teardown` — optional helper to clean Neptune/OpenSearch artifacts via `src/utils/aws.py`.
+
+## Running Retrieval & QA
+1. Ensure Neptune is reachable (`configs/default.yaml` → `neptune.endpoint`).
+2. Seed OpenSearch with embeddings (`make embed`).
+3. Execute `python -m src.qa.answer --config configs/default.yaml --question-file configs/demo_questions.yaml` to retrieve subgraphs and generate grounded answers.
+4. Inspect logs in `logs/` for expansion/pruning diagnostics.
+
+## Evaluation & Testing
+- `pytest -q` runs unit tests, including Neptune expansion coverage in `tests/test_expand_neptune.py`.
+- Extend evaluation by comparing factual grounding metrics or integrating STaRK benchmark datasets for cross-validation of retrieval quality [STaRK](https://github.com/snap-stanford/STaRK).
+
+## Docker Images
+- `infra/docker/Dockerfile.api` — FastAPI service packaging the QA endpoint.
+- `infra/docker/Dockerfile.ui` — Streamlit UI for browsing retrieved subgraphs.
+Build with:
+```bash
+docker build -t biographrag-api -f infra/docker/Dockerfile.api .
+docker build -t biographrag-ui -f infra/docker/Dockerfile.ui .
+```
+
+## Production deployment (AWS)
+The system is designed to run fully on AWS with Amazon Neptune (openCypher), Amazon OpenSearch for vector retrieval, and S3 for graph CSVs. For production, supply endpoints and credentials via environment variables (preferred) or update `configs/default.yaml` and override with env.
+
+### Required environment variables (provide at run time)
+- `AWS_DEFAULT_REGION` — e.g., `us-east-1`
+- `BIO_KG_neptune__endpoint` — Writer endpoint with port 8182, e.g., `https://<cluster>.neptune.amazonaws.com:8182`
+- `BIO_KG_neptune__iam_role_arn` — IAM role ARN used by Neptune bulk loader (S3 read)
+- `BIO_KG_s3__bucket` — S3 bucket name for graph CSVs (prefixes `prime/`, `pkg/`)
+- `BIO_KG_open_search__endpoint` — Managed OpenSearch domain endpoint (IAM SigV4 auth)
+- `BIO_KG_open_search__use_iam_auth` — `true` (recommended)
+- `BIO_KG_open_search__service` — `es` for Managed OpenSearch or `aoss` for Serverless
+- `BIO_KG_llm__api_base` — OpenAI‑compatible base URL (exposes `/v1/chat/completions`)
+- `BIO_KG_llm__api_key` — API key for the LLM endpoint
+
+
+
+### API endpoints (FastAPI)
+- `GET /health` → `{ "status": "ok" }`
+
+- `POST /qa` → run retrieval + PyG fusion + LLM; body:
+  ```json
+  { "question": "Which PrimeKG findings highlight EGFR involvement in colon cancer?" }
+  ```
+  Response includes the grounded answer, prompt, nodes, edges, and evidence hits.
+
+### Secure secrets management
+
+
+
+### What the user must supply (summary)
+- Neptune writer endpoint (port 8182) and bulk‑loader role ARN
+- S3 bucket for graph CSVs
+- OpenSearch endpoint (Managed or Serverless) with IAM access for the app role
+- OpenAI‑compatible LLM base URL and API key
+
+These are not bundled with the repository and must be provided at deploy time.
+
+## Configuration Highlights
+- `graph.backend`: switch between Neptune (default) and future adapters.
+- `retrieval.top_k` / `expansion_hops`: shape the subgraph frontier.
+- `pyg_rag.top_facts`: control evidence window fed to the LLM.
+- `open_search.*`: set endpoint, index name, and IAM auth toggle.
+- `llm.*`: configure API gateway for the generation model.
+
+## Deployment Playbook
+1. Provision AWS resources (Neptune, OpenSearch, S3) via IaC or console.
+2. Populate S3 with PrimeKG / PubMedKG graph CSVs.
+3. Trigger Neptune bulk loads using `src/ingest/neptune_loader.py` helpers.
+4. Deploy API/UI containers to ECS or EKS; mount config overrides via environment variables.
+5. Configure CI (GitHub Actions) to lint, test, and build Docker artifacts on pull requests.
+6. Monitor query latency and evidence coverage through structured logs and optional CloudWatch dashboards.
+
+## Contributing
+- Fork, create a feature branch, and ensure `pytest` + `ruff` pass locally.
+- Document new configs or endpoints in `docs/` and update demo questions if QA surfaces new entities.
+- Open a PR with clear reproducibility notes and, where possible, add tests.
+
+## License
+MIT License. See `LICENSE` for the full text.
+
+## Citation
+If you use BioGraphRAG in published work, please cite the NVIDIA GraphRAG blog and G-Retriever paper listed above. A project-specific BibTeX entry will be added once the hackathon whitepaper is finalized.
+
+## Acknowledgements
+- BioGraphRAG builds upon GraphRAG patterns, PyTorch Geometric utilities, and the collective work of the hackathon team.
+- STaRK benchmark materials influenced the production-ready README structure and evaluation framing [STaRK](https://github.com/snap-stanford/STaRK).
