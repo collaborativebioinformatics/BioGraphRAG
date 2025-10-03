@@ -1,0 +1,46 @@
+Optional Additions (S3 + Neptune oriented)
+
+These are optional enhancements you can add incrementally for robustness, observability, and maintainability. Enable as needed.
+
+- Infrastructure (CI/CD and IaC)
+  - GitHub Actions for lint/tests on pull requests
+  - CDK/Terraform to provision S3/Neptune with least-privilege IAM
+
+- Docker/runtime
+  - Harden images and use multi-stage builds
+  - Compose profiles for dev vs prod under infra/docker and infra/compose
+
+- Config management
+  - Environment-variable overrides for configs/default.yaml
+  - Use AWS Secrets Manager for secrets (no plaintext in code)
+
+- Data/ETL robustness
+  - Pydantic validation in src/etl/harmonize.py
+  - Retry/backoff and caching for PubMed in src/data/pubmedkg.py
+  - Checkpointed incremental loads
+
+- Neptune loading
+  - Idempotent upserts for nodes/edges
+  - Bulk loader integration and loader JSON artifact
+  - Document schema conventions in src/etl/schema.md
+
+- Observability
+  - Structured JSON logs in src/utils/logging.py
+  - OpenTelemetry traces/metrics across api, ETL, and loaders
+
+- Retrieval/embeddings
+  - Embedding cache and standardized chunking
+  - Small eval harness for retrieval quality in src/retrieval
+
+- API/UI
+  - Minimal endpoints in src/api/app.py for QA/graph queries
+  - Lightweight explorer in src/ui to visualize subgraphs and evidence
+
+- Testing
+  - Unit tests for utils, retrieval, and ETL
+  - Tiny synthetic datasets in tests/
+
+- Security
+  - IAM least privilege for S3/Neptune
+  - Request signing and network controls
+  - No plaintext keys in code

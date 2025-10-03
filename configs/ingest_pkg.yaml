@@ -1,0 +1,6 @@
+pkg_ingest:
+  input_dir: data/local/pubmedkg/exports
+  output_dir: data/graph/pkg
+  publications_file: pubmed_publications.csv
+  mentions_file: pubmed_mentions.csv
+  citations_file: pubmed_citations.csv

@@ -1,0 +1,7 @@
+prime_ingest:
+  input_dir: data/local/primekg/exports
+  output_dir: data/graph/prime
+  edges_file: kg.csv
+  nodes_file: ''
+  nodes_glob: prime_nodes_*.csv
+  relationships_glob: prime_edges_*.csv

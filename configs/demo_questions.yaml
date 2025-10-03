@@ -1,0 +1,50 @@
+- id: q1
+  question: >-
+    Which PrimeKG findings highlight EGFR involvement in colon cancer and which
+    PubMedKG articles provide supporting evidence?
+  expected_context:
+    - Entity:EGFR
+    - Disease:Colon Cancer
+
+- id: q2
+  question: >-
+    Summarize PrimeKG relations connecting BRAF V600E to MAPK signaling and cite
+    supporting PubMedKG publications.
+  expected_context:
+    - Entity:BRAF V600E
+    - Pathway:MAPK signaling
+
+- id: q3
+  question: >-
+    Identify PrimeKG interactions for NRAS and highlight PubMedKG evidence on
+    resistance mechanisms to targeted inhibitors.
+  expected_context:
+    - Entity:NRAS
+    - Interaction:Protein
+- id: demo-01
+  question: >-
+    Which targeted therapies does PrimeKG associate with BRAF V600E, and which
+    PubMedKG publications support those associations?
+  expected_context:
+    - Entity:BRAF V600E
+    - Therapy:Targeted
+    - Disease:Melanoma
+
+- id: demo-02
+  question: >-
+    Summarize EGFR evidence captured in PrimeKG and list PubMedKG mentions
+    highlighting therapeutic relevance in colorectal cancer.
+  expected_context:
+    - Entity:EGFR
+    - Disease:Colorectal Cancer
+
+- id: demo-03
+  question: >-
+    What resistance mechanisms involving NRAS Q61 mutations are documented in
+    PrimeKG and PubMedKG, and how are they linked to MEK inhibitors?
+  expected_context:
+    - Entity:NRAS Q61
+    - Drug:MEK inhibitor
+
+
+

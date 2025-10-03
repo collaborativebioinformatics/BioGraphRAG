@@ -1,0 +1,83 @@
+project:
+  name: dual-bio-graph-rag-neo4j
+  region: us-east-1
+  environment: dev
+
+paths:
+  local_data_dir: data/local
+  graph_dir: data/graph
+  embeddings_dir: data/embeddings
+  vector_index_path: data/embeddings/vector.index
+  logs_dir: logs
+
+neo4j:
+  uri: bolt://localhost:7687
+  username: neo4j
+  password: changeme
+  database: neo4j
+
+open_search:
+  endpoint: https://search-your-collection-id.us-east-1.aoss.amazonaws.com
+  collection_name: dual-kg-vectors
+  index_name: graphrag_nodes
+  embedding_dimension: 768
+
+embedding_model:
+  document_model: sentence-transformers/all-MiniLM-L12-v2
+  node_model: sentence-transformers/all-MiniLM-L12-v2
+
+llm:
+  provider: openai-compatible
+  api_base: http://localhost:8001/v1
+  api_key: changeme
+  model_name: meta-llama/Meta-Llama-3-8B-Instruct
+  temperature: 0.2
+  max_new_tokens: 512
+
+pyg_rag:
+  enabled: true
+  model: node2vec
+  dim: 64
+  walks_per_node: 5
+  walk_length: 20
+  context_size: 10
+  epochs: 1
+  learning_rate: 0.01
+  top_facts: 40
+
+retrieval:
+  top_k: 8
+  expansion_hops: 2
+  prune_max_nodes: 40
+  prune_max_degree: 10
+  namespaces:
+    include:
+      - PRIME_
+      - PKG_
+
+prime_ingest:
+  input_dir: data/local/primekg/exports
+  output_dir: data/graph/prime
+  edges_file: kg.csv
+  nodes_file: ''
+  nodes_glob: prime_nodes_*.csv
+  relationships_glob: prime_edges_*.csv
+
+pkg_ingest:
+  input_dir: data/local/pubmedkg/exports
+  output_dir: data/graph/pkg
+  publications_file: pubmed_publications.csv
+  mentions_file: pubmed_mentions.csv
+  citations_file: pubmed_citations.csv
+
+neptune_loader:
+  output_dir: configs
+  file_name_prefix: neptune_loader
+
+vector_store:
+  include_types:
+    - PRIME_*
+    - PKG_*
+
+app:
+  demo_questions: configs/demo_questions.yaml
