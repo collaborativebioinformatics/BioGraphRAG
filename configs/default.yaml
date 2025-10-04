@@ -31,7 +31,8 @@ neptune:
   iam_role_arn: arn:aws:iam::123456789012:role/NeptuneLoadFromS3
   graph_format: openCypher
   max_concurrency: 2
-
+  VPC: <EC2 endpint ARN path>
+  SG: <Opensearch oopt>   ### Ticket 201 : send Ben  IT ETL  
 open_search:
   endpoint: https://search-your-collection-id.us-east-1.aoss.amazonaws.com
   collection_name: dual-kg-vectors
