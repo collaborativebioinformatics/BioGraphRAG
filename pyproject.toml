@@ -1,0 +1,19 @@
+[project]
+name = "biographrag"
+version = "0.1.0"
+description = "Graph-native RAG for biomedical QA using Amazon Neptune + GNN + LLM"
+authors = [{ name = "Hackathon Team" }]
+requires-python = ">=3.10"
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/collaborativebioinformatics/BioGraphRAG"
+
+[project.scripts]
+biographrag-embed = "src.retrieval.g_retriever:initialize_vector_store"
+biographrag-qa = "src.qa.answer:main"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+

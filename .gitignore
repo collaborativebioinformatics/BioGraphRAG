@@ -6,3 +6,18 @@ __pycache__/
 
 ## ignore Env file 
 test.pem
+*.pem
+.env
+.env.local
+.envrc
+.venv/
+.ruff_cache/
+.pytest_cache/
+.mypy_cache/
+logs/
+data/
+.ipynb_checkpoints/
+dist/
+build/
+*.egg-info/
+node_modules/
